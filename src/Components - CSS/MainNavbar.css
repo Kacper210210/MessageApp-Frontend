@@ -1,0 +1,42 @@
+#homeNavbar {
+    width: 100%;
+    min-height: 75px;
+    background-color: #ccffff;
+}
+#brand {
+    cursor: pointer;
+    color: #00e6e6;
+}
+.btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 30px;
+}
+.btns > a {
+    color: #00e6e6 !important;
+}
+.btnUnderline {
+    position: relative;
+    padding-bottom: 5px;
+    overflow: hidden;
+}
+.btnUnderline > div {
+    width: 100%;
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    left: -100%;
+    transition: left 0.25s linear;
+    background-color: #00e6e6;
+}
+.btnUnderline:hover > div {
+    left: 0;
+}
+.active > .btnUnderline > div {
+    left: 0 !important;
+}
+
+a {
+    text-decoration: none !important;
+    cursor: pointer;
+}
