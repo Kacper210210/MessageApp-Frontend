@@ -22,7 +22,7 @@ export const registerAction = async ({ request }) => {
     const json = await request.json();
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/register', {
+        const response = await fetch('http://127.0.0.1:3000/api/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
