@@ -36,6 +36,26 @@
     left: 0 !important;
 }
 
+.dropdownTitle {
+    color: #00e6e6 !important;
+}
+
+.dropdown-menu {
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.dropdownItem svg {
+    margin-right: 5px;
+}
+#logoutItem {
+    background-color: #ff6666;
+    color: white;
+}
+#logoutItem:hover {
+    background-color: #ff4d4d !important;
+}
+
 a {
     text-decoration: none !important;
     cursor: pointer;

@@ -1,0 +1,11 @@
+#chatList {
+    width: 350px;
+    height: calc(100vh - 75px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+#searchInput {
+    width: 80%;
+}

@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
 import '../Components - CSS/RegisterPage.css';
 
-import { redirect, useBlocker, useActionData, useSubmit } from "react-router-dom";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useBlocker, useActionData, useSubmit } from "react-router-dom";
 
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Modal from 'react-bootstrap/Modal';
 
 import AlertBox from "./AlertBox";
@@ -22,6 +17,8 @@ export const registerAction = async ({ request }) => {
     const json = await request.json();
 
     try {
+        console.log(JSON.stringify(json));
+
         const response = await fetch('http://127.0.0.1:3000/api/register', {
             method: 'POST',
             headers: {
@@ -32,10 +29,11 @@ export const registerAction = async ({ request }) => {
 
         const result = await response.json();
 
-        if(result.response === 'User succesfully added to database!') {
+        if(result.response === 'User succesfully added to database!') { // To change
             return {
                 username: json.email,
-                password: json.password
+                password: json.password,
+                setImage: true
             }
         }
 

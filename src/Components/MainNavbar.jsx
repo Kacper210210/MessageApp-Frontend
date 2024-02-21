@@ -1,15 +1,106 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../Components - CSS/MainNavbar.css";
+
+import Store from "../Store";
+
+import { useNavigate, Link, NavLink, Outlet } from "react-router-dom";
+
+import AlertBox from "./AlertBox";
 
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
+import NavDropdown from "react-bootstrap/NavDropdown";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-regular-svg-icons";
+import { faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
-import { Link, NavLink, Outlet } from "react-router-dom";
+let unsubscribe = undefined;
 
 const MainNavbar = () => {
+    const [state, setState] = useState(Store.getState()); // Re-render component after dispatch
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:3000/api/user', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                if(response.status === 200) {
+                    const result = await response.json();
+
+                    console.log(result);
+
+                    Store.dispatch({ type: 'SET_USER', payload: result });
+
+                    //console.log(Store.getState());
+
+                    if(window.location.pathname === '/login' || window.location.pathname === '/register') {
+                        navigate('/messageApp/home');
+                    }
+                }
+            } catch(err) {
+                console.log(err);
+            }
+        }
+
+        fetchUser();
+    }, [window.location.pathname]);
+
+    useEffect(() => {
+        if(unsubscribe != undefined) unsubscribe();
+
+        unsubscribe = Store.subscribe(() => {
+            setState(Store.getState());
+        });
+    }, []);
+
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const onLogout = async (event) => {
+        event.preventDefault();
+
+        try {
+            const response = await fetch('http://127.0.0.1:3000/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+
+            const result = await response.json();
+
+            console.log(result, result.response);
+
+            if(result.response === true) {
+                Store.dispatch({
+                    type: 'SET_USER',
+                    payload: {
+                        id: undefined,
+                        email: undefined,
+                        username: undefined,
+                        name: undefined,
+                        surname: undefined
+                    }
+                });
+
+                navigate('/login');
+            } else {
+                setAlertMessage("Could not log out! Try again.");
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
     return (<>
         <Navbar id="homeNavbar" sticky="top">
             <Container>
@@ -21,7 +112,7 @@ const MainNavbar = () => {
                         }}>Message App</span>
                     </Navbar.Brand>
                 </Link>
-                <Container className="btns">
+                {state.user.id === undefined ? <Container className="btns">
                     <NavLink to='/register'>
                         <div className="btnUnderline">
                             Register
@@ -34,9 +125,23 @@ const MainNavbar = () => {
                             <div></div>
                         </div>
                     </NavLink>
-                </Container>
+                </Container> : <Container className="btns">
+                    <NavDropdown title={`Hi, ${state.user.username}`} className="dropdownTitle">
+                        <NavDropdown.Item href='/userManagement' className="dropdownItem">
+                            <FontAwesomeIcon icon={faGear} />
+                            User Management
+                        </NavDropdown.Item>
+                        <NavDropdown.Item href='/logout' onClick={async (e) => await onLogout(e)} className="dropdownItem" id="logoutItem">
+                            <FontAwesomeIcon icon={faRightFromBracket} />
+                            Logout
+                        </NavDropdown.Item>
+                    </NavDropdown>
+                </Container>}
             </Container>
         </Navbar>
+        <div className="contentCenter" style={{ position: 'relative' }}>
+            <AlertBox variant="danger" dismissible={true} alertMessage={alertMessage} setAlertMessage={setAlertMessage} style={{ position: 'absolute', zIndex: 1 }} />
+        </div>
         <Outlet />
     </>);
 }
