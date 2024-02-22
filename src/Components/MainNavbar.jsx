@@ -15,10 +15,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-regular-svg-icons";
 import { faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
-let unsubscribe = undefined;
-
 const MainNavbar = () => {
-    const [state, setState] = useState(Store.getState()); // Re-render component after dispatch
+    const state = Store.getState();
 
     const navigate = useNavigate();
 
@@ -34,14 +32,6 @@ const MainNavbar = () => {
                 });
 
                 if(response.status === 200) {
-                    const result = await response.json();
-
-                    console.log(result);
-
-                    Store.dispatch({ type: 'SET_USER', payload: result });
-
-                    //console.log(Store.getState());
-
                     if(window.location.pathname === '/login' || window.location.pathname === '/register') {
                         navigate('/messageApp/home');
                     }
@@ -53,14 +43,6 @@ const MainNavbar = () => {
 
         fetchUser();
     }, [window.location.pathname]);
-
-    useEffect(() => {
-        if(unsubscribe != undefined) unsubscribe();
-
-        unsubscribe = Store.subscribe(() => {
-            setState(Store.getState());
-        });
-    }, []);
 
     const [alertMessage, setAlertMessage] = useState('');
 
@@ -101,6 +83,18 @@ const MainNavbar = () => {
         }
     }
 
+    const createImage = () => {
+        /*const blob = new Blob([state.image]);
+
+        const blobUrl = URL.createObjectURL(blob);
+
+        console.log(blobUrl);
+
+        return <img src={blobUrl} />;*/
+
+        return <></>;
+    }
+
     return (<>
         <Navbar id="homeNavbar" sticky="top">
             <Container>
@@ -126,7 +120,7 @@ const MainNavbar = () => {
                         </div>
                     </NavLink>
                 </Container> : <Container className="btns">
-                    <NavDropdown title={`Hi, ${state.user.username}`} className="dropdownTitle">
+                    <NavDropdown title={<>Hi, {state.user.username}{state.image != undefined ? createImage() : <></>}</>} className="dropdownTitle">
                         <NavDropdown.Item href='/userManagement' className="dropdownItem">
                             <FontAwesomeIcon icon={faGear} />
                             User Management

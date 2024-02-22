@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "../Components - CSS/MessageAppPage.css";
 
+import { Outlet } from "react-router-dom";
+
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 
@@ -24,14 +26,21 @@ const MessageAppPage = () => {
                 }
             `}
         </style>
-        <div id="chatList">
-            <InputGroup className="mb-3" id="searchInput">
-                <Form.Control type="text" name="searchText" value={searchText} onChange={(e) => onSearch(e)} />
-                <InputGroup.Text>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} />
-                </InputGroup.Text>
-            </InputGroup>
-            <div className="chat">First contact</div>
+        <div style={{
+            height: 'calc(100vh - 95px)',
+            marginTop: '20px',
+            display: 'flex'
+        }}>
+            <div id="chatList">
+                <InputGroup className="mb-3" id="searchInput">
+                    <Form.Control type="text" name="searchText" value={searchText} onChange={(e) => onSearch(e)} />
+                    <InputGroup.Text>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} />
+                    </InputGroup.Text>
+                </InputGroup>
+                <div className="chat">First contact</div>
+            </div>
+            <Outlet />
         </div>
     </>);
 }
