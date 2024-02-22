@@ -16,9 +16,14 @@ import Button from "react-bootstrap/Button";
 import DefaultIcon from "../assets/circle-user.jpg";
 
 /*
+<<<<<<< HEAD
     await fetch('http://127.0.0.1:3000/api/get_image', {
             method: 'GET',
             credentials: 'include'
+=======
+    await fetch('http://localhost:3000/api/get_image', {
+            method: 'GET'
+>>>>>>> 24f476054d4247a214fbaab086a90a61b07d539b
         });
 */
 
@@ -31,7 +36,7 @@ export const loginAction = async ({ request }) => {
     }
 
     try {
-        const response = await fetch('http://127.0.0.1:3000/api/login', {
+        const response = await fetch('http://localhost:3000/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
