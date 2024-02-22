@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../Components - CSS/LoginPage.css";
 
+import Store from "../Store";
+
 import { fetchUserImage } from "../App";
 import { passwordMinLength } from "./RegisterPage";
 import AlertBox from "./AlertBox";
@@ -15,18 +17,6 @@ import Button from "react-bootstrap/Button";
 
 import DefaultIcon from "../assets/circle-user.jpg";
 
-/*
-<<<<<<< HEAD
-    await fetch('http://127.0.0.1:3000/api/get_image', {
-            method: 'GET',
-            credentials: 'include'
-=======
-    await fetch('http://localhost:3000/api/get_image', {
-            method: 'GET'
->>>>>>> 24f476054d4247a214fbaab086a90a61b07d539b
-        });
-*/
-
 export const loginAction = async ({ request }) => {
     const json = await request.json();
 
@@ -36,7 +26,7 @@ export const loginAction = async ({ request }) => {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/login', {
+        const response = await fetch(`${Store.getState().baseUrl}/api/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -61,7 +51,7 @@ export const loginAction = async ({ request }) => {
                 //const formData = new FormData();
                 //formData.append('image', defaultIconBlob);
     
-                await fetch('http://127.0.0.1:3000/api/change_image', {
+                await fetch(`${Store.getState().baseUrl}/api/change_image`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'text/plain'

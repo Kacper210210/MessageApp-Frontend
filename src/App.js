@@ -15,6 +15,8 @@ import PasswordResetPage from './Components/PasswordResetPage';
 import MessageAppPage from './Components/MessageAppPage';
 import MessageAppHomePage from './Components/MessageAppHomePage';
 
+import Env from './.env';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -54,7 +56,7 @@ const router = createBrowserRouter([
 
 const fetchUser = async () => {
   try {
-    const response = await fetch('http://127.0.0.1:3000/api/user', {
+    const response = await fetch(`${Store.getState().baseUrl}/api/user`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -76,7 +78,7 @@ const fetchUser = async () => {
 
 const fetchImage = async () => {
   try {
-    const response = await fetch('http://127.0.0.1:3000/api/get_image', {
+    const response = await fetch(`${Store.getState().baseUrl}/api/get_image`, {
       method: 'GET',
       credentials: 'include'
     });
@@ -121,6 +123,35 @@ function App() {
     interval = setInterval(async () => {
       await fetchUserImage();
     }, 30 * 1000);
+
+    const fetchEnv = async () => {
+      const response = await fetch(Env, {
+        headers: {
+          'Content-Type': 'text/plain'
+        }
+      });
+
+      let result = await response.text();
+
+      result = result.replace('"', '');
+      result = result.replace('\"', '');
+
+      const results = result.split('\n');
+
+      const envVariables = {};
+
+      for(let keyValuePair of results) {
+        const pair = keyValuePair.split('=');
+
+        envVariables[pair[0]] = pair[1].replace(/(\r\n|\n|\r)/gm, "");
+      }
+
+      Store.dispatch({ type: 'SET_ENV_VARIABLES', payload: envVariables });
+
+      Store.dispatch({ type: 'SET_BASE_URL', payload: `https://${Store.getState().envVariables.server_address}:${Store.getState().envVariables.server_port}` });
+    }
+
+    fetchEnv();
   }, []);
 
   return (

@@ -23,7 +23,7 @@ const MainNavbar = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/user', {
+                const response = await fetch(`${Store.getState().baseUrl}/api/user`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ const MainNavbar = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:3000/api/logout', {
+            const response = await fetch(`${Store.getState().baseUrl}/api/logout`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

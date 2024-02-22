@@ -7,7 +7,9 @@ export const defaultState = {
         surname: undefined
     },
     image: undefined,
-    userList: []
+    userList: [],
+    envVariables: {},
+    baseUrl: ''
 }
 
 const AppReducer = (state = defaultState, action) => {
@@ -26,6 +28,16 @@ const AppReducer = (state = defaultState, action) => {
         }
         case 'SET_USER_LIST': {
             draftState.userList = action.payload;
+
+            return draftState;
+        }
+        case 'SET_ENV_VARIABLES': {
+            draftState.envVariables = action.payload;
+
+            return draftState;
+        }
+        case 'SET_BASE_URL': {
+            draftState.baseUrl = action.payload;
 
             return draftState;
         }

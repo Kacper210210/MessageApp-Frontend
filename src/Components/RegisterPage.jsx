@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import '../Components - CSS/RegisterPage.css';
 
+import Store from "../Store";
+
 import { useBlocker, useActionData, useSubmit } from "react-router-dom";
 
 import Form from 'react-bootstrap/Form';
@@ -17,7 +19,7 @@ export const registerAction = async ({ request }) => {
     const json = await request.json();
 
     try {
-        const response = await fetch('http://127.0.0.1:3000/api/register', {
+        const response = await fetch(`${Store.getState().baseUrl}/api/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

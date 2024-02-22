@@ -48,7 +48,7 @@ const MessageAppHomePage = () => {
     const onSearch = async () => {
         setSearch(true);
 
-        const response = await fetch('http://127.0.0.1:3000/api/userlist', {
+        const response = await fetch(`${Store.getState().baseUrl}/api/userlist`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -172,7 +172,7 @@ const MessageAppHomePage = () => {
     const sendBulkMessage = async () => {
         for(const key of Object.keys(userIds)) {
             if(userIds[key].checked) {
-                await fetch(`http://127.0.0.1:3000/api/user/${key}/send`, {
+                await fetch(`${Store.getState().baseUrl}/api/user/${key}/send`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
