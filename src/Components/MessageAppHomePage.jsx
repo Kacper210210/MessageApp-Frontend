@@ -3,6 +3,8 @@ import "../Components - CSS/MessageAppHomePage.css";
 
 import Store from "../Store";
 
+import { useNavigate } from "react-router-dom";
+
 import parse from "html-react-parser";
 
 import Button from "react-bootstrap/Button";
@@ -13,6 +15,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCommentDots } from "@fortawesome/free-regular-svg-icons";
 
 const MessageAppHomePage = () => {
+    const navigate = useNavigate();
+
     const state = Store.getState();
 
     const [search, setSearch] = useState(false);
@@ -82,6 +86,8 @@ const MessageAppHomePage = () => {
         const newUsersList = [];
 
         for(const user of state.userList) {
+            if(state.user.id === user.id) continue;
+
             let searchArray = [];
 
             const matchProperties = ['email', 'username'];
@@ -169,6 +175,10 @@ const MessageAppHomePage = () => {
         }
     }
 
+    const startNewConversation = () => {
+        navigate(`/messageApp/chats/${Object.keys(userIds)[0]}`);
+    }
+
     const sendBulkMessage = async () => {
         for(const key of Object.keys(userIds)) {
             if(userIds[key].checked) {
@@ -194,7 +204,7 @@ const MessageAppHomePage = () => {
         }
 
         if(checkedUserIdsCount === 0) return <Button variant="primary" disabled>Start new conversation</Button>;
-        else if(checkedUserIdsCount === 1) return <Button variant="primary">Start new conversation</Button>;
+        else if(checkedUserIdsCount === 1) return <Button variant="primary" onClick={() => startNewConversation()}>Start new conversation</Button>;
         else return <Button variant="primary" disabled={message.length === 0 ? true : false} onClick={async () => await sendBulkMessage()}>Send bulk message</Button>;
     }
 

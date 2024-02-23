@@ -38,7 +38,9 @@ const MessageAppPage = () => {
                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                     </InputGroup.Text>
                 </InputGroup>
-                <div className="chat">First contact</div>
+                <div className="chat">
+                    
+                </div>
             </div>
             <Outlet />
         </div>

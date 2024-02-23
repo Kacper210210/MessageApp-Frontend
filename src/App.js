@@ -14,6 +14,7 @@ import LoginPage, { loginAction } from './Components/LoginPage';
 import PasswordResetPage from './Components/PasswordResetPage';
 import MessageAppPage from './Components/MessageAppPage';
 import MessageAppHomePage from './Components/MessageAppHomePage';
+import ChatsPage from './Components/ChatsPage';
 
 import Env from './.env';
 
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
           {
             path: 'home',
             element: <MessageAppHomePage />
+          },
+          {
+            path: 'chats/*',
+            element: <ChatsPage />
           }
         ]
       }
