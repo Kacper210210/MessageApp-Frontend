@@ -50,6 +50,9 @@
     display: flex;
     align-items: center;
 }
+.message > .text-muted > .badge {
+    transition: opacity 1s;
+}
 .messageText {
     padding: 5px 10px;
     border-radius: 5px;
@@ -57,4 +60,11 @@
 }
 .ownMessage {
     align-items: flex-end;
+}
+
+#unreadMessages {
+    min-height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

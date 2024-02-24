@@ -142,6 +142,8 @@ function App() {
       result = result.replace('\"', '');
 
       const results = result.split('\n');
+      
+      //console.log(results);
 
       const envVariables = {};
 
