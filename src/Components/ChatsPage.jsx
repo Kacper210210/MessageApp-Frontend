@@ -442,13 +442,12 @@ const ChatsPage = () => {
                 try {
                     console.log(tempReadTill);
 
-                    const response = await fetch(`${Store.getState().baseUrl}/api/private_messages/read_till`, {
+                    const response = await fetch(`${Store.getState().baseUrl}/api/private_messages/read_till/${currentUser.id}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            to_user: currentUser.id,
                             date: tempReadTill
                         }),
                         credentials: 'include'
