@@ -1,70 +1,26 @@
-# Getting Started with Create React App
+Ten projekt został wykonany przez zespół "Algorytmiczni Dijkstrowicze" na [Ogólnopolskie Zawody Techniczne PRIMUS INTER PARES](https://zt.zsl.gda.pl/) organizowane przez Zespół Szkół Łączności
+Im. Obrońców Poczty Polskiej w Gdańsku.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+# [PL] MessageApp - serwer Frontend
+To repozytorium funkcjonuje jako zależność dla [repozytorium serwera Backend](https://github.com/NorCz/MessageApp). Zaleca się uruchamianie obu serwerów poprzez jeden [obraz Docker](https://github.com/NorCz/MessageApp/Releases), który zarządza oboma serwerami i ustala właściwe warunki ich pracy w środowisku produkcyjnym.
 
-In the project directory, you can run:
+Mimo że nie jest to zalecane w celach innych niż krótkie sesje debugowania, możliwe jest uruchomienie serwera Frontend niezależnie od serwera Backend, należy jednak pamiętać o utrzymaniu poprawnej konfiguracji środowiska obu serwerów.
 
-### `npm start`
+> [!WARNING]
+> W folderze `src` serwera Frontend należy umieścić **ten sam** plik `.env`, który wykorzystywany jest przez serwer Backend. Wymagane są tutaj pola `server_address` oraz `server_port`.
+> Należy upewnić się, aby oba serwery pracowały na **tym samym źródle**. Pozwala to na wykorzystanie w prosty sposób ciasteczek do autentykacji bez dodatkowego zarządzania zapytaniami CORS.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Przed uruchomieniem serwera należy najpierw zainstalować aktualną wersję zależności projektu.
+```bash
+npm i
+```
+Serwer można uruchomić następującym skryptem skonfigurowanym dla wsparcia HTTPS w pliku `package.json`:
+```bash
+npm run start
+```
+Dodatkowo można zbudować statyczną wersję strony i wystawić ją na dowolnym serwerze z własną konfiguracją (należy jednak pamiętać o zachowaniu zgodnego z serwerem Backend pliku `.env`, oraz utrzymania tego samego źródła obu serwerów) poprzez poniższe polecenie. Gotowa wersja strony zostanie wtedy skompilowana w folderze `build`.
+```bash
+npm run build
+```
