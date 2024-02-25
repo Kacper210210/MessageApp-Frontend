@@ -33,9 +33,12 @@ const ChatsPage = () => {
 
     const [message, setMessage] = useState('');
 
+    const [tempReadTill, setTempReadTill] = useState(undefined);
     const [readTill, setReadTill] = useState(undefined);
-    const [messages, setMessages] = useState([]);
 
+    const [messages, setMessages] = useState(undefined);
+
+    const [prevPageCounter, setPrevPageCounter] = useState(undefined);
     const [pageCounter, setPageCounter] = useState(undefined);
 
     const [elementScrollIntoView, setElementScrollIntoView] = useState(undefined);
@@ -44,9 +47,9 @@ const ChatsPage = () => {
 
     const [scrollAdjustment, setScrollAdjustment] = useState(0);
 
-    const [onLoad, setOnLoad] = useState(false);
+    const [currentScrollPosition, setCurrentScrollPosition] = useState(undefined); // If prevPageCounter > pageCounter
 
-    const [tempReadTill, setTempReadTill] = useState(undefined);
+    const [onLoad, setOnLoad] = useState(false);
 
     const [unreadMessages, setUnreadMessages] = useState(0);
 
@@ -63,12 +66,10 @@ const ChatsPage = () => {
     
             const result = await response.json();
     
-            //console.log(result);
-    
-            if(response.status === 404) {
-                fetchedReadTill = 0;
-            } else if(response.status === 200) {
+            if(response.status === 200) {
                 fetchedReadTill = result.read_till;
+            } else if(response.status === 404) {
+                fetchedReadTill = 0;
             } else throw new Error("Could not determine 'readTill'!");
 
             setReadTill(fetchedReadTill);
@@ -96,11 +97,6 @@ const ChatsPage = () => {
                 const result = await response.json();
     
                 result.reverse();
-
-                /*console.log([
-                    ...result,
-                    ...messages
-                ]);*/
         
                 setMessages([
                     ...result,
@@ -115,9 +111,7 @@ const ChatsPage = () => {
             }
         } else if(page === 'readTill') {
             try {
-                if(readTill === undefined) readTill = readTill;
-
-                let pageCounter = 1;
+                let tempPageCounter = 1;
 
                 let tempMessages = [];
 
@@ -125,16 +119,14 @@ const ChatsPage = () => {
                 
                 do {
                     try {
-                        const pageResponse = await fetch(`${Store.getState().baseUrl}/api/user/${userId}/${pageCounter}`, {
+                        const pageResponse = await fetch(`${Store.getState().baseUrl}/api/user/${userId}/${tempPageCounter}`, {
                             method: 'GET',
                             credentials: 'include'
                         });
 
-                        if(pageResponse.status != 200) throw new Error(`Could not load page: ${pageCounter}!`);
+                        if(pageResponse.status != 200) throw new Error(`Could not load page: ${tempPageCounter}!`);
                 
                         const pageResult = await pageResponse.json();
-
-                        //console.log(pageResult);
                 
                         tempMessages = [...tempMessages, ...pageResult];
 
@@ -145,28 +137,35 @@ const ChatsPage = () => {
                             lastMessageTimestamp = date.getTime();
                         }
 
-                        pageCounter++;
+                        tempPageCounter++;
                     } catch(err) {
                         throw new Error(err);
                     }
                 } while(lastMessageTimestamp >= readTill);
 
-                //console.log(readTill, tempMessages);
+                let tempElementScrollIntoView = undefined;
 
                 for(const tempMessage of tempMessages) {
                     const date = new Date(tempMessage.timestamp);
 
-                    if(date.getTime() < readTill) break;
-                    else {
-                        setElementScrollIntoView(`message-${tempMessage.message_id}`);
+                    if(date.getTime() < readTill) {
+                        if(tempElementScrollIntoView === undefined) {
+                            tempElementScrollIntoView = `message-${tempMessage.message_id}`;
+                        }
+
+                        break;
+                    } else {
+                        tempElementScrollIntoView = `message-${tempMessage.message_id}`;
                     }
                 }
+
+                setElementScrollIntoView(tempElementScrollIntoView);
 
                 tempMessages.reverse();
 
                 setMessages(tempMessages);
 
-                setPageCounter(pageCounter);
+                setPageCounter(tempPageCounter);
             } catch(err) {
                 console.log(err);
             }
@@ -174,7 +173,7 @@ const ChatsPage = () => {
             const messagesDisplay = document.querySelector("#messagesDisplay");
             const messageDisplayTop = 145;
 
-            const messageHeight = 64;
+            const messageHeight = 54;
             const messageGap = 15;
 
             let tempReadTillDisplay = undefined;
@@ -196,11 +195,7 @@ const ChatsPage = () => {
                 }
             }
 
-            //console.log(tempReadTillDisplay);
-
-            let tempScrollAdjustment = 0;
-
-            let pageCounter = 1;
+            let tempPageCounter = 1;
 
             let tempMessages = [];
 
@@ -212,16 +207,14 @@ const ChatsPage = () => {
 
             do {
                 try {
-                    const pageResponse = await fetch(`${Store.getState().baseUrl}/api/user/${userId}/${pageCounter}`, {
+                    const pageResponse = await fetch(`${Store.getState().baseUrl}/api/user/${userId}/${tempPageCounter}`, {
                         method: 'GET',
                         credentials: 'include'
                     });
 
-                    if(pageResponse.status != 200) throw new Error(`Could not load page: ${pageCounter}!`);
+                    if(pageResponse.status != 200) throw new Error(`Could not load page: ${tempPageCounter}!`);
             
                     const pageResult = await pageResponse.json();
-
-                    //console.log(pageResult);
             
                     tempMessages = [...tempMessages, ...pageResult];
 
@@ -244,15 +237,13 @@ const ChatsPage = () => {
                         lastMessageTimestamp = date.getTime();
                     }
 
-                    pageCounter++;
+                    tempPageCounter++;
                 } catch(err) {
                     throw new Error(err);
                 }
             } while(lastMessageTimestamp >= tempReadTillDisplay);
 
-            //console.log(newMessages);
-
-            tempScrollAdjustment += newMessages * (messageHeight + messageGap);
+            let tempScrollAdjustment = newMessages * (messageHeight + messageGap);
 
             if(newMessages === tempMessages.length) tempScrollAdjustment -= messageGap;
 
@@ -262,9 +253,7 @@ const ChatsPage = () => {
 
             setMessages(tempMessages);
 
-            //console.log(pageCounter);
-
-            setPageCounter(pageCounter);
+            setPageCounter(tempPageCounter);
 
             if(tempMessages.length != 0) {
                 const date = new Date(tempMessages[tempMessages.length - 1].timestamp);
@@ -272,19 +261,11 @@ const ChatsPage = () => {
                 setLastCheckedTimestamp(date.getTime() + 1);
             }
 
-            //console.log(tempScrollAdjustment);
-
             setScrollAdjustment(tempScrollAdjustment);
 
+            setCurrentScrollPosition(messagesDisplay.scrollTop);
+
             setUnreadMessages(unreadMessages);
-        }
-    }
-
-    const fetchReadTillMessages = async () => {
-        const fetchedReadTill = await fetchReadTill();
-
-        if(typeof fetchedReadTill === "number") {
-            await fetchMessages('readTillDisplay', currentUser.id, fetchedReadTill);
         }
     }
 
@@ -306,23 +287,31 @@ const ChatsPage = () => {
 
         fetchUser(location.pathname.split('/')[3]);
 
-        const fetchInitialMessages = async (userId) => {
+        const fetchInitialReadTillMessages = async (userId) => {
             const fetchedReadTill = await fetchReadTill(userId);
 
             if(typeof fetchedReadTill === "number") {
-                await fetchMessages('readTill', location.pathname.split('/')[3], fetchedReadTill);
+                await fetchMessages('readTill', userId, fetchedReadTill);
             }
         }
 
-        fetchInitialMessages(location.pathname.split('/')[3]);
+        fetchInitialReadTillMessages(location.pathname.split('/')[3]);
 
         return () => {
             prevMessages = undefined;
         }
     }, []);
 
+    const fetchReadTillMessages = async () => {
+        const fetchedReadTill = await fetchReadTill();
+
+        if(typeof fetchedReadTill === "number") {
+            await fetchMessages('readTillDisplay', currentUser.id, fetchedReadTill);
+        }
+    }
+
     useEffect(() => {
-        if(currentUser != undefined && messages.length != undefined) {
+        if(currentUser != undefined && messages != undefined) {
             interval = setInterval(async () => {
                 await fetchReadTillMessages();
             }, 1000);
@@ -364,7 +353,9 @@ const ChatsPage = () => {
             const date = new Date(message.timestamp);
 
             if(message.from === state.user.id) {
-                tempReadTill = Math.max(date.getTime() + 1, tempReadTill === undefined ? 0 : tempReadTill);
+                if(tempReadTill === undefined && (readTill === undefined || date.getTime() + 1 > readTill)) {
+                    tempReadTill = date.getTime() + 1;
+                }
 
                 break;
             }
@@ -377,8 +368,8 @@ const ChatsPage = () => {
                 const messageTop = messageRect.top - messageDisplayTop;
                 const messageBottom = messageRect.bottom - messageDisplayTop;
 
-                if(messageTop >= 0 && messageBottom <= messagesDisplay.offsetHeight) {
-                    tempReadTill = date.getTime() + 1; // +1ms
+                if(messageTop >= 0 && messageBottom <= messagesDisplay.offsetHeight && tempReadTill === undefined) {
+                    tempReadTill = date.getTime() + 1; // + 1ms
                 }
             }
         }
@@ -404,14 +395,14 @@ const ChatsPage = () => {
             document.getElementById(elementScrollIntoView).scrollIntoView({ behavior: 'instant' });
         }
 
-        if(Math.abs(messagesDisplay.scrollHeight - messagesDisplay.scrollTop - messagesDisplay.offsetHeight) > 1) {
+        if(Math.abs(messagesDisplay.scrollHeight - messagesDisplay.scrollTop - messagesDisplay.offsetHeight) > 1 && scrollAdjustment != 0) {
             messagesDisplay.scrollBy({
                 top: -scrollAdjustment,
                 behavior: 'instant'
             });
         }
 
-        if(prevMessages === undefined && typeof messages === 'object') { // onLoad
+        if(prevMessages === undefined && typeof messages === 'object') {
             onScroll();
 
             setTimeout(() => {
@@ -437,18 +428,41 @@ const ChatsPage = () => {
     }, [onLoad, pageCounter, messages]);
 
     useEffect(() => {
+        if(pageCounter != undefined) {
+            const messagesDisplay = document.querySelector("#messagesDisplay");
+
+            const pageHeight = 2070;
+
+            if(prevPageCounter != undefined) {
+                if(pageCounter > prevPageCounter) {
+                    messagesDisplay.scrollBy({
+                        top: (pageCounter - prevPageCounter) * pageHeight,
+                        behavior: 'instant'
+                    });
+                } else {
+                    messagesDisplay.scroll({
+                        top: currentScrollPosition - (prevPageCounter - pageCounter) * pageHeight,
+                        behavior: 'instant'
+                    });
+                }
+            }
+
+            setPrevPageCounter(pageCounter);
+        }
+    }, [pageCounter]);
+
+    useEffect(() => {
         const setFetchReadTill = async () => {
             if(tempReadTill != undefined) {
                 try {
-                    console.log(tempReadTill);
+                    //console.log(tempReadTill);
 
-                    const response = await fetch(`${Store.getState().baseUrl}/api/private_messages/read_till`, {
+                    const response = await fetch(`${Store.getState().baseUrl}/api/private_messages/read_till/${currentUser.id}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            to_user: currentUser.id,
                             date: tempReadTill
                         }),
                         credentials: 'include'
@@ -498,22 +512,13 @@ const ChatsPage = () => {
     const onKeyDown = async (event) => {
         const keyCode = event.keyCode;
 
-        //console.log(keyCode);
-
         if(message.length != 0 && keyCode === 13) {
             await sendMessage();
         }
     }
 
     const onScrollDown = () => {
-        const messagesDisplay = document.querySelector("#messagesDisplay");
 
-        if(unreadMessages != 0) {
-            messagesDisplay.scrollBy({
-                top: messagesDisplay.scrollHeight - messagesDisplay.offsetHeight,
-                behavior: 'smooth'
-            });
-        }
     }
 
     return (<>
@@ -532,9 +537,11 @@ const ChatsPage = () => {
                                     <Form.Text className="text-muted">
                                         {message.from === state.user.id && <Badge bg="secondary" style={{ marginRight: '5px', opacity: `${date.getTime() >= readTill ? 1 : 0}` }}>New</Badge>}By {message.from === currentUser.id ? currentUser.username : 'You'} &#9679; {dateToString(date)}{message.from != state.user.id && <Badge bg="secondary" style={{ marginLeft: '5px', opacity: `${date.getTime() >= readTill ? 1 : 0}` }}>New</Badge>}
                                     </Form.Text>
-                                    <span className="messageText">
-                                        {message.content}
-                                    </span>
+                                    <div>
+                                        <span className="messageText">
+                                            {message.content}
+                                        </span>
+                                    </div>
                                 </div>
                             );
                         })

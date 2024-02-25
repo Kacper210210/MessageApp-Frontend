@@ -35,6 +35,10 @@ const MainNavbar = () => {
                     if(window.location.pathname === '/login' || window.location.pathname === '/register') {
                         navigate('/messageApp/home');
                     }
+                } else {
+                    if(window.location.pathname.includes('/messageApp')) {
+                        navigate('/login');
+                    }
                 }
             } catch(err) {
                 console.log(err);

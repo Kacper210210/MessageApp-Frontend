@@ -1,10 +1,38 @@
 #chatList {
-    width: 350px;
+    width: calc(350px - 1px);
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-right: 1px solid #00e6e6;
 }
 #searchInput {
     width: 80%;
+}
+#chat {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+.chatEntry {
+    width: 100%;
+    height: calc(75px - 1px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid #00e6e6;
+}
+.chatEntry > .img {
+    width: 50px;
+    height: 50px;
+}
+.chatEntry > div:nth-child(2) {
+    max-width: 60%;
+}
+.firstMessage {
+    max-width: 80%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }

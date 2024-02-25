@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../Components - CSS/MessageAppPage.css";
+
+import Store from "../Store";
 
 import { Outlet } from "react-router-dom";
 
@@ -12,9 +14,35 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 const MessageAppPage = () => {
     const [searchText, setSearchText] = useState('');
 
+    const [startedConversations, setStartedConversations] = useState([]);
+    const [firstMessages, setFirstMessages] = useState([]);
+
     const onSearch = (event) => {
         setSearchText(event.target.value);
     }
+
+    const fetchStartedConversations = async () => {
+        try {
+            const response = await fetch(`${Store.getState().baseUrl}/api/started_conversations`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            const result = await response.json();
+
+            if(response.status === 200) {
+                //console.log(result.recentChats);
+
+                setStartedConversations(result.recentChats);
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
+        fetchStartedConversations();
+    }, []);
 
     return (<>
         <style>
@@ -38,8 +66,20 @@ const MessageAppPage = () => {
                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                     </InputGroup.Text>
                 </InputGroup>
-                <div className="chat">
-                    
+                <div id="chat">
+                    <div className="chatEntry">
+                        <div className="img">
+
+                        </div>
+                        <div>
+                            <div className="username">
+                                dfughdfg@fsjg (sdjbfkgsdg)
+                            </div>
+                            <div className="firstMessage">
+                                ddddddddddfjkgdfkffffffffffffffffffdfggggggggggggggggggggggggggggg
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <Outlet />
