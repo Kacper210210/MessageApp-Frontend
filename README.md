@@ -4,7 +4,7 @@ Im. Obrońców Poczty Polskiej w Gdańsku.
 ---
 
 # [PL] MessageApp - serwer Frontend
-To repozytorium funkcjonuje jako zależność dla [repozytorium serwera Backend](https://github.com/NorCz/MessageApp). Zaleca się uruchamianie obu serwerów poprzez jeden [obraz Docker](https://github.com/NorCz/MessageApp/Releases), który zarządza oboma serwerami i ustala właściwe warunki ich pracy w środowisku produkcyjnym.
+To repozytorium funkcjonuje jako zależność dla [repozytorium serwera Backend](https://github.com/NorCz/MessageApp). Zaleca się uruchamianie obu serwerów poprzez jeden [obraz Docker](https://github.com/NorCz/MessageApp/releases/latest), który zarządza oboma serwerami i ustala właściwe warunki ich pracy w środowisku produkcyjnym.
 
 Mimo że nie jest to zalecane w celach innych niż krótkie sesje debugowania, możliwe jest uruchomienie serwera Frontend niezależnie od serwera Backend, należy jednak pamiętać o utrzymaniu poprawnej konfiguracji środowiska obu serwerów.
 
