@@ -88,14 +88,6 @@ const MainNavbar = () => {
     }
 
     const createImage = () => {
-        /*const blob = new Blob([state.image]);
-
-        const blobUrl = URL.createObjectURL(blob);
-
-        console.log(blobUrl);
-
-        return <img src={blobUrl} />;*/
-
         return <></>;
     }
 

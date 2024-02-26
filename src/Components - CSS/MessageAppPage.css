@@ -22,17 +22,45 @@
     align-items: center;
     gap: 15px;
     border-bottom: 1px solid #00e6e6;
+    cursor: pointer;
 }
-.chatEntry > .img {
-    width: 50px;
-    height: 50px;
+.chatEntry:hover {
+    background-color: #99ffff;
+}
+.chatEntry > .profileImg {
+    width: 40px;
+    height: auto;
+    border-radius: 50%;
 }
 .chatEntry > div:nth-child(2) {
     max-width: 60%;
+}
+.username {
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 .firstMessage {
     max-width: 80%;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+
+#chatType {
+    width: 80%;
+    padding-left: 10px;
+}
+#chatType > div label {
+    margin-left: 5px;
+}
+
+#createGroupChat {
+    display: flex;
+    align-items: center;
+}
+#createGroupChat svg {
+    max-width: 12.5px;
+    margin-right: 5px;
 }

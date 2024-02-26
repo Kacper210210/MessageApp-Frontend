@@ -39,6 +39,10 @@
 .dropdownTitle {
     color: #00e6e6 !important;
 }
+.dropdownTitle > a {
+    display: flex;
+    align-items: center;
+}
 
 .dropdown-menu {
     padding: 0 !important;
@@ -59,4 +63,10 @@
 a {
     text-decoration: none !important;
     cursor: pointer;
+}
+
+#profilePicture {
+    max-width: 20px;
+    height: auto;
+    margin-left: 5px;
 }

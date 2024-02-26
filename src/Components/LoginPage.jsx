@@ -15,7 +15,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
-import DefaultIcon from "../assets/circle-user.jpg";
+import DefaultIcon from "../assets/DefaultUserIcon.png";
 
 export const loginAction = async ({ request }) => {
     const json = await request.json();
@@ -38,26 +38,36 @@ export const loginAction = async ({ request }) => {
 
         if(result.response === true) {
             if(Object.keys(json).includes('setImage')) {
-                const responseImage = await fetch(DefaultIcon);
+                console.log(DefaultIcon);
 
-                const resultImage = await responseImage.text();
-
-                const defaultIconBlob = new Blob([resultImage]);
-
-                const defaultIconBlobText = await defaultIconBlob.text();
-
-                console.log(defaultIconBlobText);
-    
-                //const formData = new FormData();
-                //formData.append('image', defaultIconBlob);
-    
                 await fetch(`${Store.getState().baseUrl}/api/change_image`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'text/plain'
                     },
-                    body: defaultIconBlobText
+                    body: DefaultIcon
                 });
+
+                /*const reader = new FileReader();
+                reader.onloadend = async () => {
+                    const defaultIconBase64 = reader.result;
+
+                    //console.log(defaultIconBase64);
+
+                    await fetch(`${Store.getState().baseUrl}/api/change_image`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        },
+                        body: defaultIconBase64
+                    });
+                }
+
+                const response = await fetch(`${Store.getState().baseUrl}${DefaultIcon}`);
+
+                const result = await response.blob();
+
+                reader.readAsDataURL(result);*/
             }
 
             await fetchUserImage();

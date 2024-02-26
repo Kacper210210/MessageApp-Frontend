@@ -286,7 +286,9 @@ const ChatsPage = () => {
         }
 
         fetchUser(location.pathname.split('/')[3]);
+    }, [location.pathname.split('/')[3]]);
 
+    useEffect(() => {
         const fetchInitialReadTillMessages = async (userId) => {
             const fetchedReadTill = await fetchReadTill(userId);
 

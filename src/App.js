@@ -88,10 +88,10 @@ const fetchImage = async () => {
       credentials: 'include'
     });
 
-    if(response.status === 200) {
-      const result = await response.text();
+    const result = await response.json();
 
-      Store.dispatch({ type: 'SET_IMAGE', payload: result });
+    if(response.status === 200) {
+      Store.dispatch({ type: 'SET_IMAGE', payload: result.image });
     }
   } catch(err) {
     console.log(err);
@@ -102,7 +102,7 @@ export const fetchUserImage = async () => {
   const userStatus = await fetchUser();
 
   if(userStatus === 200) {
-    fetchImage();
+    await fetchImage();
   }
 }
 

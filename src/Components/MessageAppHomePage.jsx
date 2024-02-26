@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../Components - CSS/MessageAppHomePage.css";
 
 import Store from "../Store";
 
+import SearchUsersModal from "./SearchModal";
+
 import { useNavigate } from "react-router-dom";
 
-import parse from "html-react-parser";
-
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,43 +16,17 @@ import { faCommentDots } from "@fortawesome/free-regular-svg-icons";
 const MessageAppHomePage = () => {
     const navigate = useNavigate();
 
-    const state = Store.getState();
-
     const [search, setSearch] = useState(false);
 
-    const [onFocus, setOnFocus] = useState(false);
-
-    const [searchUsersList, setSearchUsersList] = useState([]);
-
-    const [userIds, setUserIds] = useState({});
+    const [searchUsersChecked, setSearchUsersChecked] = useState([]);
 
     const [message, setMessage] = useState('');
-
-    useEffect(() => {
-        //console.log("addEventListener");
-
-        const onSearchUsersListHide = (event) => {
-            //console.log(event.target.tagName, event.target.getAttribute("id"));
-    
-            if(event.target.tagName != "INPUT" && event.target.getAttribute("id") != "userListOuterDisplay") {
-                setOnFocus(false);
-            }
-        }
-
-        window.addEventListener("click", onSearchUsersListHide);
-
-        return () => {
-            //console.log("removeEventListener");
-
-            window.removeEventListener("click", onSearchUsersListHide);
-        }
-    }, []);
 
     const onSearch = async () => {
         setSearch(true);
 
         const response = await fetch(`${Store.getState().baseUrl}/api/userlist`, {
-            method: 'GET',
+            method: 'POST',
             credentials: 'include'
         });
 
@@ -65,102 +38,27 @@ const MessageAppHomePage = () => {
             usersArray.push(result[key]);
         }
 
+        //console.log(usersArray);
+
         Store.dispatch({ type: 'SET_USER_LIST', payload: usersArray });
     }
 
-    const onHide = () => {
-        setSearch(false);
-
-        setSearchUsersList([]);
-
-        setUserIds([]);
-
-        setMessage('');
-    }
-
-    const onChange = (event) => {
-        const searchValue = event.target.value;
-
-        setSearchUsersList([]);
-
-        const newUsersList = [];
-
-        for(const user of state.userList) {
-            if(state.user.id === user.id) continue;
-
-            let searchArray = [];
-
-            const matchProperties = ['email', 'username'];
-
-            for(let i = 0; i < matchProperties.length; i++) {
-                for(let j = 0; j < user[matchProperties[i]].length; j++) {
-                    let tempLongestMatch = 0;
-
-                    while(j + tempLongestMatch < user[matchProperties[i]].length && tempLongestMatch < searchValue.length && user[matchProperties[i]][j + tempLongestMatch] === searchValue[tempLongestMatch]) {
-                        tempLongestMatch++;
-                    }
-
-                    if(tempLongestMatch === searchValue.length) {
-                        searchArray.push({
-                            i,
-                            j,
-                            longestMatch: tempLongestMatch
-                        });
-                    }
-                }
-            }
-
-            if(searchArray.length != 0) {
-                newUsersList.push({
-                    ...user,
-                    searchArray
-                });
-            }
-        }
-
-        newUsersList.sort((a, b) => {
-            return a.searchArray.length < b.searchArray.length;
-        });
-
-        const tempSearchUsersList = [];
-
-        for(let i = 0; i < Math.min(newUsersList.length, 50); i++) {
-            const user = newUsersList[i];
-
-            tempSearchUsersList.push(user);
-        }
-
-        console.log(tempSearchUsersList);
-
-        setSearchUsersList(tempSearchUsersList);
-    }
-
-    const onFormCheckChange = (event, searchUser) => {
-        setUserIds({
-            ...userIds,
-            [event.target.getAttribute("id")]: {
-                ...searchUser,
-                checked: event.target.checked
-            }
-        });
-    }
-
     const createMessageInput = () => {
-        let checkedUserIdsCount = 0;
+        let searchUsersCheckedCount = 0;
 
-        for(const key of Object.keys(userIds)) {
-            if(userIds[key].checked) checkedUserIdsCount++;
+        for(const key of Object.keys(searchUsersChecked)) {
+            if(searchUsersChecked[key].checked) searchUsersCheckedCount++;
         }
 
-        if(checkedUserIdsCount > 1) {
+        if(searchUsersCheckedCount > 1) {
             return <>
                 <Form.Control type="text" id="messageInput" placeholder="Enter bulk message..." value={message} onChange={(e) => setMessage(e.target.value)} />
                 <Form.Text className="text-muted">
                     Send bulk message to:
                     <ul>
                         {
-                            Object.keys(userIds).map((userId) => {
-                                const user = userIds[userId];
+                            Object.keys(searchUsersChecked).map((userId) => {
+                                const user = searchUsersChecked[userId];
 
                                 if(user.checked) {
                                     return <>
@@ -176,36 +74,46 @@ const MessageAppHomePage = () => {
     }
 
     const startNewConversation = () => {
-        navigate(`/messageApp/chats/${Object.keys(userIds)[0]}`);
+        navigate(`/messageApp/chats/${Object.keys(searchUsersChecked)[0]}`);
     }
 
     const sendBulkMessage = async () => {
-        for(const key of Object.keys(userIds)) {
-            if(userIds[key].checked) {
+        for(const key of Object.keys(searchUsersChecked)) {
+            if(searchUsersChecked[key].checked) {
                 await fetch(`${Store.getState().baseUrl}/api/user/${key}/send`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    credentials: 'include',
                     body: JSON.stringify({
                         content: message
-                    })
+                    }),
+                    credentials: 'include'
                 });
             }
         }
+
+        setMessage('');
     }
 
     const createPrimaryButton = () => {
-        let checkedUserIdsCount = 0;
+        let searchUsersCheckedCount = 0;
 
-        for(const key of Object.keys(userIds)) {
-            if(userIds[key].checked) checkedUserIdsCount++;
+        for(const key of Object.keys(searchUsersChecked)) {
+            if(searchUsersChecked[key].checked) searchUsersCheckedCount++;
         }
 
-        if(checkedUserIdsCount === 0) return <Button variant="primary" disabled>Start new conversation</Button>;
-        else if(checkedUserIdsCount === 1) return <Button variant="primary" onClick={() => startNewConversation()}>Start new conversation</Button>;
+        if(searchUsersCheckedCount === 0) return <Button variant="primary" disabled>Start new conversation</Button>;
+        else if(searchUsersCheckedCount === 1) return <Button variant="primary" onClick={() => startNewConversation()}>Start new conversation</Button>;
         else return <Button variant="primary" disabled={message.length === 0 ? true : false} onClick={async () => await sendBulkMessage()}>Send bulk message</Button>;
+    }
+
+    const onHide = () => {
+        setSearch(false);
+
+        setSearchUsersChecked([]);
+
+        setMessage('');
     }
 
     return (<>
@@ -228,53 +136,7 @@ const MessageAppHomePage = () => {
                 Start new<br />conversations...
             </div>
             <Button variant="info" onClick={async () => await onSearch()}>Search</Button>
-            <Modal show={search} onHide={() => onHide()} backdrop="static">
-                <Modal.Header closeButton>
-                    <Modal.Title>Search</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form.Control type="text" name="username" placeholder="Search by email or username..." onFocus={() => setOnFocus(true)} onChange={(e) => onChange(e)} />
-                    <div className="contentCenter" style={{ position: 'relative', marginTop: '5px' }}>
-                        <div id="userListDisplay" style={onFocus ? { display: 'block' } : { display: 'none' }}>
-                            <div id="userListOuterDisplay"></div>
-                            <div id="userList">
-                                {
-                                    searchUsersList.map((searchUser) => {
-                                        const email = searchUser.email;
-                                        const username = searchUser.username;
-
-                                        let finalStr = '<div class="userInfo"><div class="email">';
-
-                                        for(const letter of email) {
-                                            finalStr += `<span>${letter}</span>`;
-                                        }
-
-                                        finalStr += '</div><div class="username">(';
-
-                                        for(const letter of username) {
-                                            finalStr += `<span>${letter}</span>`;
-                                        }
-
-                                        finalStr += ')</div></div>';
-
-                                        return <div className="user">
-                                            {parse(finalStr)}
-                                            <Form.Check type="switch" id={searchUser.id} checked={Object.keys(userIds).includes(`${searchUser.id}`) && userIds[searchUser.id].checked ? true : false} onChange={(e) => onFormCheckChange(e, searchUser)} style={{ position: 'relative', zIndex: 2 }} />
-                                        </div>;
-                                    })
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    {createMessageInput()}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => onHide()}>
-                        Cancel
-                    </Button>
-                    {createPrimaryButton()}
-                </Modal.Footer>
-            </Modal>
+            <SearchUsersModal search={search} searchUsersChecked={searchUsersChecked} setSearchUsersChecked={setSearchUsersChecked} createPrimaryButton={createPrimaryButton} createMessageInput={createMessageInput} onCleanup={onHide} />
         </div>
     </>);
 }
