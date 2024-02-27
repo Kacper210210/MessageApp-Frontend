@@ -103,9 +103,9 @@ const MessageAppHomePage = () => {
             if(searchUsersChecked[key].checked) searchUsersCheckedCount++;
         }
 
-        if(searchUsersCheckedCount === 0) return <Button variant="primary" disabled>Start new conversation</Button>;
-        else if(searchUsersCheckedCount === 1) return <Button variant="primary" onClick={() => startNewConversation()}>Start new conversation</Button>;
-        else return <Button variant="primary" disabled={message.length === 0 ? true : false} onClick={async () => await sendBulkMessage()}>Send bulk message</Button>;
+        if(searchUsersCheckedCount === 0) return <Button variant="primary" disabled>Zacznij nową konwersację</Button>;
+        else if(searchUsersCheckedCount === 1) return <Button variant="primary" onClick={() => startNewConversation()}>Zacznij nową konwersację</Button>;
+        else return <Button variant="primary" disabled={message.length === 0 ? true : false} onClick={async () => await sendBulkMessage()}>Wyślij wiadomość masową</Button>;
     }
 
     const onHide = () => {

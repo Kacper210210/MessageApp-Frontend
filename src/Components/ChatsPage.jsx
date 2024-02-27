@@ -598,7 +598,7 @@ const ChatsPage = () => {
     return (<>
         <div id="conversation">
             <div id="username">
-                {`${currentUser.email} (${currentUser.username})`}
+                {`${currentUser.name} ${currentUser.surname} <${currentUser.email}> (${currentUser.username})`}
             </div>
             <div id="messagesDisplay">
                 <div id="messages">
@@ -609,7 +609,7 @@ const ChatsPage = () => {
                             return (
                                 <div className={`message ${message.from === state.user.id && 'ownMessage'}`} id={`message-${message.message_id}`}>
                                     <Form.Text className="text-muted">
-                                        {message.from === state.user.id && <Badge bg="secondary" style={{ marginRight: '5px', opacity: `${date.getTime() >= readTill ? 1 : 0}` }}>New</Badge>}By {message.from === currentUser.id ? currentUser.username : 'You'} &#9679; {dateToString(date)}{message.from != state.user.id && <Badge bg="secondary" style={{ marginLeft: '5px', opacity: `${date.getTime() >= readTill ? 1 : 0}` }}>New</Badge>}
+                                        {message.from === state.user.id && <Badge bg="secondary" style={{ marginRight: '5px', opacity: `${date.getTime() >= readTill ? 1 : 0}` }}>Nowy</Badge>}Od {message.from === currentUser.id ? currentUser.username : 'Ty'} &#9679; {dateToString(date)}{message.from != state.user.id && <Badge bg="secondary" style={{ marginLeft: '5px', opacity: `${date.getTime() >= readTill ? 1 : 0}` }}>Nowy</Badge>}
                                     </Form.Text>
                                     <div>
                                         <span className="messageText">

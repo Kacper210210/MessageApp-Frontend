@@ -8,9 +8,13 @@
 }
 #banner #img {
     width: 100%;
-    height: 500px;
     background-color: yellow;
 }
+#banner #img img {
+    width: 100%;
+    object-fit: fill;
+}
+
 #banner #text {
     display: flex;
     flex-direction: column;
