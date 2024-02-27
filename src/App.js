@@ -15,6 +15,7 @@ import PasswordResetPage from './Components/PasswordResetPage';
 import MessageAppPage from './Components/MessageAppPage';
 import MessageAppHomePage from './Components/MessageAppHomePage';
 import ChatsPage from './Components/ChatsPage';
+import GroupChatsPage from './Components/GroupChatsPage';
 
 import Env from './.env';
 
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
           {
             path: 'chats/*',
             element: <ChatsPage />
+          },
+          {
+            path: 'groupChats/*',
+            element: <GroupChatsPage />
           }
         ]
       }

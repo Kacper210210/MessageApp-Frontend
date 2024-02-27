@@ -80,6 +80,21 @@ const MessageAppPage = () => {
         return result;
     }
 
+    const fetchMemberUserId = async (chatId, memberId) => {
+        const response = await fetch(`${Store.getState().baseUrl}/api/chat/get_chat_member/${chatId}/${memberId}`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        const result = await response.json();
+
+        if(response.status != 200) throw new Error(`Could not get chat member: ${memberId}!`);
+
+        console.log(result);
+
+        return result.user_id;
+    }
+
     const fetchChats = async () => {
         try {
             const response = await fetch(`${Store.getState().baseUrl}/api/chats`, {
@@ -558,7 +573,7 @@ const MessageAppPage = () => {
     }
 
     const onChatClick = (chatId) => {
-        console.log("onChatClick!");
+        navigate(`groupChats/${chatId}`);
     }
 
     const onChatNameChange = async (event) => {
@@ -740,18 +755,22 @@ const MessageAppPage = () => {
                                 //console.log(startedConversation);
 
                                 return (<>
-                                    <div className="chatEntry" onClick={() => onChatClick(startedConversation.chat.id)} style={location.pathname.split('/')[2] === 'groupChats' && location.pathname.split('/')[3] == startedConversation.chat.id ? { backgroundColor: '#00e6e6' } : {}}>
-                                        <div className="username chatName">
-                                            <div>
-                                                {chatNameEdit === startedConversation.chat.id ? <Form.Control type="text" id={`chatNameInput-${startedConversation.chat.id}`} name="chatName" defaultValue={startedConversation.chat.name} /> : startedConversation.chat.name}
+                                    <div className="chatEntry" onClick={() => onChatClick(startedConversation.chat.id)} style={location.pathname.split('/')[2] === 'groupChats' && location.pathname.split('/')[3] == startedConversation.chat.id ? { backgroundColor: '#00e6e6' } : { }}>
+                                        <div style={{
+                                            maxWidth: '75%'
+                                        }}>
+                                            <div className="username chatName">
+                                                <div>
+                                                    {chatNameEdit === startedConversation.chat.id ? <Form.Control type="text" id={`chatNameInput-${startedConversation.chat.id}`} name="chatName" defaultValue={startedConversation.chat.name} /> : startedConversation.chat.name}
+                                                </div>
+                                                {isCurrentUserAdmin(startedConversation) ? <div className="chatNameEdit" onClick={() => onChatNameEdit(startedConversation.chat.id)}>
+                                                    <div id={`chatNameEditDisplay-${startedConversation.chat.id}`}></div>
+                                                    <FontAwesomeIcon icon={faPen} />
+                                                </div>: <></>}
                                             </div>
-                                            {isCurrentUserAdmin(startedConversation) ? <div className="chatNameEdit" onClick={() => onChatNameEdit(startedConversation.chat.id)}>
-                                                <div id={`chatNameEditDisplay-${startedConversation.chat.id}`}></div>
-                                                <FontAwesomeIcon icon={faPen} />
-                                            </div>: <></>}
-                                        </div>
-                                        <div className="firstMessage">
-                                            {parse(startedConversation.firstMessage.content)}
+                                            <div className="firstMessage">
+                                                {parse(startedConversation.firstMessage.content)}
+                                            </div>
                                         </div>
                                         {isCurrentUserAdmin(startedConversation) ? <div>
                                             <Button variant="info" className="addUsersButton" onClick={async () => await onAddUsersToGroupChat(startedConversation)}>
