@@ -10,11 +10,13 @@
     width: 80%;
 }
 #chat {
+    position: relative;
     width: 100%;
     height: 100%;
     overflow: auto;
 }
 .chatEntry {
+    position: relative;
     width: 100%;
     height: calc(75px - 1px);
     display: flex;
@@ -27,10 +29,25 @@
 .chatEntry:hover {
     background-color: #99ffff;
 }
+.chatEntry:hover .chatNameEdit {
+    display: flex;
+}
 .chatEntry > .profileImg {
+    position: relative;
+}
+.chatEntry > .profileImg > img {
     width: 40px;
     height: auto;
     border-radius: 50%;
+}
+.availabilityStatus {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: green;
+    bottom: -2.5px;
+    right: 2.5px;
 }
 .chatEntry > div:nth-child(2) {
     max-width: 60%;
@@ -40,6 +57,40 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+.chatName {
+    max-width: 75%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.chatName > div:nth-child(1) {
+    max-width: calc(100% - 15px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.chatName > div:nth-child(1):has(input) {
+    padding: 10px 5px;
+}
+.chatName input {
+    max-height: 30px;
+}
+.chatName .chatNameEdit {
+    position: relative;
+    max-height: 15px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.chatName .chatNameEdit > div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.chatName .chatNameEdit svg {
+    height: 15px;
+    width: auto;
 }
 .firstMessage {
     max-width: 80%;
@@ -63,4 +114,27 @@
 #createGroupChat svg {
     max-width: 12.5px;
     margin-right: 5px;
+}
+
+.addUsersButton {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: calc(50% - 15px);
+    right: 20px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.addUsersButton svg {
+    max-width: 12.5px;
+}
+.chatEntry:hover .addUsersButton {
+    display: flex;
+}
+
+#startNewConversations {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
 }

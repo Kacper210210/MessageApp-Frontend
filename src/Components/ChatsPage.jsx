@@ -14,8 +14,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faArrowDown, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 
-let prevMessages = undefined;
-
 let interval = undefined;
 
 const ChatsPage = () => {
@@ -38,20 +36,26 @@ const ChatsPage = () => {
 
     const [messages, setMessages] = useState(undefined);
 
+    const [onInitialMessagesLoad, setOnInitialMessagesLoad] = useState(false);
+
     const [prevPageCounter, setPrevPageCounter] = useState(undefined);
     const [pageCounter, setPageCounter] = useState(undefined);
 
-    const [elementScrollIntoView, setElementScrollIntoView] = useState(undefined);
+    const [notLoadNewPage, setNotLoadNewPage] = useState(false);
 
-    const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState(undefined);
+    const [newScrollPosition, setNewScrollPosition] = useState(undefined);
+
+    const [scrollElementIntoView, setScrollElementIntoView] = useState(undefined); // 'id'
 
     const [scrollAdjustment, setScrollAdjustment] = useState(0);
 
-    const [currentScrollPosition, setCurrentScrollPosition] = useState(undefined); // If prevPageCounter > pageCounter
+    const [lastCheckedTimestamp, setLastCheckedTimestamp] = useState(undefined);
 
     const [onLoad, setOnLoad] = useState(false);
 
     const [unreadMessages, setUnreadMessages] = useState(0);
+
+    const [isWindowFocused, setIsWindowFocused] = useState(true);
 
     const fetchReadTill = async (userId = undefined) => {
         if(userId === undefined) userId = currentUser.id;
@@ -92,9 +96,9 @@ const ChatsPage = () => {
                     credentials: 'include'
                 });
 
-                if(response.status != 200) throw new Error(`Could not load page: ${page}!`);
-        
                 const result = await response.json();
+
+                if(response.status != 200) throw new Error(`Could not load page: ${page}!`);
     
                 result.reverse();
         
@@ -104,6 +108,8 @@ const ChatsPage = () => {
                 ]);
 
                 if(result.length != 0) {
+                    setPrevPageCounter(page);
+
                     setPageCounter(page + 1);
                 }
             } catch(err) {
@@ -143,27 +149,26 @@ const ChatsPage = () => {
                     }
                 } while(lastMessageTimestamp >= readTill);
 
-                let tempElementScrollIntoView = undefined;
+                //console.log(JSON.parse(JSON.stringify(tempMessages)));
+
+                let tempScrollElementIntoView = undefined;
 
                 for(const tempMessage of tempMessages) {
                     const date = new Date(tempMessage.timestamp);
 
-                    if(date.getTime() < readTill) {
-                        if(tempElementScrollIntoView === undefined) {
-                            tempElementScrollIntoView = `message-${tempMessage.message_id}`;
-                        }
-
-                        break;
-                    } else {
-                        tempElementScrollIntoView = `message-${tempMessage.message_id}`;
+                    if(date.getTime() >= readTill) {
+                        tempScrollElementIntoView = `message-${tempMessage.message_id}`;
                     }
                 }
 
-                setElementScrollIntoView(tempElementScrollIntoView);
+                setScrollElementIntoView(tempScrollElementIntoView);
 
                 tempMessages.reverse();
 
                 setMessages(tempMessages);
+
+                // prevPageCounter
+                setPrevPageCounter(pageCounter);
 
                 setPageCounter(tempPageCounter);
             } catch(err) {
@@ -175,6 +180,8 @@ const ChatsPage = () => {
 
             const messageHeight = 54;
             const messageGap = 15;
+
+            const pageHeight = 2070;
 
             let tempReadTillDisplay = undefined;
 
@@ -243,27 +250,61 @@ const ChatsPage = () => {
                 }
             } while(lastMessageTimestamp >= tempReadTillDisplay);
 
-            let tempScrollAdjustment = newMessages * (messageHeight + messageGap);
+            //console.log(JSON.parse(JSON.stringify(tempMessages)));
 
-            if(newMessages === tempMessages.length) tempScrollAdjustment -= messageGap;
+            let tempScrollElementIntoView = undefined;
 
-            if(unreadMessages != 0) setElementScrollIntoView(`message-${tempMessages[unreadMessages - 1].message_id}`);
+            for(const tempMessage of tempMessages) {
+                const date = new Date(tempMessage.timestamp);
+
+                if(date.getTime() >= readTill) {
+                    tempScrollElementIntoView = `message-${tempMessage.message_id}`;
+                }
+            }
+
+            //console.log(tempScrollElementIntoView);
 
             tempMessages.reverse();
 
             setMessages(tempMessages);
 
+            // prevPageCounter
+            setPrevPageCounter(pageCounter);
+
             setPageCounter(tempPageCounter);
+
+            if(tempPageCounter < pageCounter && messagesDisplay.scrollHeight - messagesDisplay.scrollTop != messagesDisplay.offsetHeight) {
+                setNotLoadNewPage(true);
+
+                let tempScrollPosition = messagesDisplay.scrollTop;
+
+                //tempNewScrollPosition -= (pageCounter - tempPageCounter) * pageHeight;
+
+                messagesDisplay.scroll({
+                    top: 0,
+                    behavior: 'instant'
+                });
+
+                setNewScrollPosition({
+                    scrollPosition: tempScrollPosition,
+                    messagesDisplayHeight: messagesDisplay.scrollHeight
+                });
+            }
+
+            if(messagesDisplay.scrollHeight - messagesDisplay.scrollTop === messagesDisplay.offsetHeight) setScrollElementIntoView(tempScrollElementIntoView);
+
+            // scrollAdjustment
+            let tempScrollAdjustment = newMessages * (messageHeight + messageGap);
+
+            if(newMessages === tempMessages.length) tempScrollAdjustment -= messageGap;
+
+            setScrollAdjustment(-tempScrollAdjustment);
 
             if(tempMessages.length != 0) {
                 const date = new Date(tempMessages[tempMessages.length - 1].timestamp);
 
                 setLastCheckedTimestamp(date.getTime() + 1);
             }
-
-            setScrollAdjustment(tempScrollAdjustment);
-
-            setCurrentScrollPosition(messagesDisplay.scrollTop);
 
             setUnreadMessages(unreadMessages);
         }
@@ -286,7 +327,19 @@ const ChatsPage = () => {
         }
 
         fetchUser(location.pathname.split('/')[3]);
+
+        if(currentUser.id != undefined && currentUser.id != location.pathname.split('/')[3]) {
+            setOnInitialMessagesLoad(false);
+        }
     }, [location.pathname.split('/')[3]]);
+
+    const onFocus = () => {
+        setIsWindowFocused(true);
+    }
+
+    const onBlur = () => {
+        setIsWindowFocused(false);
+    }
 
     useEffect(() => {
         const fetchInitialReadTillMessages = async (userId) => {
@@ -299,10 +352,81 @@ const ChatsPage = () => {
 
         fetchInitialReadTillMessages(location.pathname.split('/')[3]);
 
+        //console.log("fetchInitialReadTillMessages");
+
+        window.addEventListener("focus", onFocus);
+        window.addEventListener("blur", onBlur);
+
         return () => {
-            prevMessages = undefined;
+            window.removeEventListener("focus", onFocus);
+            window.removeEventListener("blur", onBlur);
         }
     }, []);
+
+    useEffect(() => {
+        if(onInitialMessagesLoad) {
+            console.log("onInitialMessagesLoad");
+
+            const messagesDisplay = document.querySelector("#messagesDisplay");
+
+            messagesDisplay.scrollBy({
+                top: messagesDisplay.scrollHeight - messagesDisplay.offsetHeight,
+                behavior: 'instant'
+            });
+
+            //console.log(messagesDisplay.scrollHeight, messagesDisplay.scrollTop, messagesDisplay.offsetHeight, scrollElementIntoView);
+
+            if(messagesDisplay.scrollHeight - messagesDisplay.scrollTop === messagesDisplay.offsetHeight && scrollElementIntoView != undefined) {
+                document.getElementById(scrollElementIntoView).scrollIntoView({
+                    behavior: 'instant'
+                });
+            }
+
+            onScroll();
+
+            setTimeout(() => {
+                setOnLoad(true);
+            }, 500);
+        }
+    }, [onInitialMessagesLoad]);
+
+    useEffect(() => {
+        if(messages != undefined) setOnInitialMessagesLoad(true);
+
+        if(onInitialMessagesLoad) {
+            const messagesDisplay = document.querySelector("#messagesDisplay");
+
+            //console.log(messagesDisplay.scrollHeight, messagesDisplay.scrollTop, messagesDisplay.offsetHeight, scrollElementIntoView);
+
+            if(scrollElementIntoView != undefined) {
+                document.getElementById(scrollElementIntoView).scrollIntoView({
+                    behavior: 'instant'
+                });
+            }
+
+            if(newScrollPosition != undefined) {
+                const tempNewScrollPosition = newScrollPosition.scrollPosition - (newScrollPosition.messagesDisplayHeight - messagesDisplay.scrollHeight);
+
+                //console.log(tempNewScrollPosition);
+
+                messagesDisplay.scroll({
+                    top: tempNewScrollPosition,
+                    behavior: 'instant'
+                });
+
+                setNewScrollPosition(undefined);
+            }
+
+            if(messagesDisplay.scrollHeight - messagesDisplay.scrollTop != messagesDisplay.offsetHeight && scrollAdjustment != 0) {
+                //console.log(scrollAdjustment);
+
+                messagesDisplay.scrollBy({
+                    top: scrollAdjustment,
+                    behavior: 'instant'
+                });
+            }
+        }
+    }, [messages]);
 
     const fetchReadTillMessages = async () => {
         const fetchedReadTill = await fetchReadTill();
@@ -336,12 +460,18 @@ const ChatsPage = () => {
         const messagesDisplay = document.querySelector("#messagesDisplay");
 
         if(event != undefined) {
-            if(messagesDisplay.scrollTop === 0) {
-                await fetchMessages(pageCounter);
+            //console.log(notLoadNewPage);
 
+            if(messagesDisplay.scrollTop === 0) {
+                if(!notLoadNewPage) {
+                    await fetchMessages(pageCounter);
+                } else setNotLoadNewPage(false);
+                
                 return;
             }
         }
+
+        if(!isWindowFocused) return;
 
         const messageDisplayTop = 145;
 
@@ -376,44 +506,10 @@ const ChatsPage = () => {
             }
         }
 
-        //console.log(tempReadTill, millisecondsToString(tempReadTill));
+        //console.log(tempReadTill, millisecondsToString(tempReadTill), readTill);
 
         setTempReadTill(tempReadTill);
     }
-
-    useEffect(() => {
-        const messagesDisplay = document.querySelector("#messagesDisplay");
-
-        if(prevMessages === undefined && typeof messages === 'object') {
-            messagesDisplay.scrollBy({
-                top: messagesDisplay.scrollHeight - messagesDisplay.offsetHeight,
-                behavior: 'instant'
-            });
-        }
-
-        //console.log(messagesDisplay.scrollHeight, messagesDisplay.scrollTop, messagesDisplay.offsetHeight);
-
-        if(Math.abs(messagesDisplay.scrollHeight - messagesDisplay.scrollTop - messagesDisplay.offsetHeight) <= 1 && elementScrollIntoView != undefined) {
-            document.getElementById(elementScrollIntoView).scrollIntoView({ behavior: 'instant' });
-        }
-
-        if(Math.abs(messagesDisplay.scrollHeight - messagesDisplay.scrollTop - messagesDisplay.offsetHeight) > 1 && scrollAdjustment != 0) {
-            messagesDisplay.scrollBy({
-                top: -scrollAdjustment,
-                behavior: 'instant'
-            });
-        }
-
-        if(prevMessages === undefined && typeof messages === 'object') {
-            onScroll();
-
-            setTimeout(() => {
-                setOnLoad(true);
-            }, 500);
-        }
-
-        prevMessages = messages;
-    }, [messages]);
 
     useEffect(() => {
         if(onLoad) {
@@ -427,31 +523,7 @@ const ChatsPage = () => {
                 messagesDisplay.removeEventListener("scroll", onScroll);
             }
         }
-    }, [onLoad, pageCounter, messages]);
-
-    useEffect(() => {
-        if(pageCounter != undefined) {
-            const messagesDisplay = document.querySelector("#messagesDisplay");
-
-            const pageHeight = 2070;
-
-            if(prevPageCounter != undefined) {
-                if(pageCounter > prevPageCounter) {
-                    messagesDisplay.scrollBy({
-                        top: (pageCounter - prevPageCounter) * pageHeight,
-                        behavior: 'instant'
-                    });
-                } else {
-                    messagesDisplay.scroll({
-                        top: currentScrollPosition - (prevPageCounter - pageCounter) * pageHeight,
-                        behavior: 'instant'
-                    });
-                }
-            }
-
-            setPrevPageCounter(pageCounter);
-        }
-    }, [pageCounter]);
+    }, [onLoad, messages, pageCounter, notLoadNewPage, isWindowFocused]);
 
     useEffect(() => {
         const setFetchReadTill = async () => {

@@ -9,7 +9,7 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
-const SearchUsersModal = ({ search, searchUsersChecked, setSearchUsersChecked, createPrimaryButton, createMessageInput, onCleanup }) => {
+const SearchUsersModal = ({ search, searchUsersChecked, setSearchUsersChecked, filterList, createPrimaryButton, createMessageInput, onCleanup }) => {
     const state = Store.getState();
 
     const [searchValue, setSearchValue] = useState('');
@@ -89,14 +89,20 @@ const SearchUsersModal = ({ search, searchUsersChecked, setSearchUsersChecked, c
     }, [pageCounter]);
 
     const fetchUserlistPage = async (tempSearchValue, page = 1) => {
+        const requestBody = {
+            search: tempSearchValue
+        }
+
+        if(filterList) {
+            requestBody.exc_list = filterList;
+        }
+
         const response = await fetch(`${Store.getState().baseUrl}/api/userlist/${page}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                search: tempSearchValue
-            }),
+            body: JSON.stringify(requestBody),
             credentials: 'include'
         });
 
@@ -161,6 +167,12 @@ const SearchUsersModal = ({ search, searchUsersChecked, setSearchUsersChecked, c
                                 state.userList.map((searchUser) => {
                                     const email = searchUser.email;
                                     const username = searchUser.username;
+
+                                    if(filterList) {
+                                        //console.log(filterList, searchUser.id);
+
+                                        if(filterList.includes(searchUser.id)) return <></>;
+                                    }
 
                                     let finalStr = '<div class="userInfo"><div class="email">';
 
