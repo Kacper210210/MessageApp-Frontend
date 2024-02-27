@@ -155,10 +155,10 @@ const SearchUsersModal = ({ search, searchUsersChecked, setSearchUsersChecked, f
     return (<>
         <Modal show={search} onHide={() => onHide()} backdrop="static">
             <Modal.Header closeButton>
-                <Modal.Title>Search</Modal.Title>
+                <Modal.Title>Szukaj</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form.Control type="text" name="username" placeholder="Search by email, username or full name..." onFocus={() => setOnFocus(true)} onChange={async (e) => await onChange(e)} />
+                <Form.Control type="text" name="username" placeholder="Wyszukuj po email, nazwie użytkownika, lub imieniu i nazwisku..." onFocus={() => setOnFocus(true)} onChange={async (e) => await onChange(e)} />
                 <div className="contentCenter" style={{ position: 'relative', marginTop: '5px' }}>
                     <div id="userListDisplay" style={onFocus ? { display: 'block' } : { display: 'none' }}>
                         <div id="userListOuterDisplay"></div>
@@ -201,7 +201,7 @@ const SearchUsersModal = ({ search, searchUsersChecked, setSearchUsersChecked, f
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={() => onHide()}>
-                    Cancel
+                    Anuluj
                 </Button>
                 {createPrimaryButton()}
             </Modal.Footer>

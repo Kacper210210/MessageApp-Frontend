@@ -23,9 +23,9 @@ const EmailInput = ({ userSettings, setUserSettings, isEmailValid, setIsEmailVal
 
     return (<>
         <Form.Group as={Col}>
-            <Form.Label>Email address: </Form.Label>
+            <Form.Label>Adres email: </Form.Label>
             <InputGroup>
-                <Form.Control type="email" name="email" placeholder="Enter email..." value={userSettings.email} onChange={(event) => onChange(event)} />
+                <Form.Control type="email" name="email" placeholder="Wpisz adres email..." value={userSettings.email} onChange={(event) => onChange(event)} />
                 <InputGroup.Text style={isEmailValid ? { backgroundColor: 'green' } : { backgroundColor: 'red' }}>
                     {isEmailValid ? <FontAwesomeIcon icon={faCheck} style={{ color: 'white' }} /> : <FontAwesomeIcon icon={faXmark} style={{ color: 'white' }} />}
                 </InputGroup.Text>

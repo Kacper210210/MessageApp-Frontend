@@ -105,13 +105,13 @@ const MainNavbar = () => {
                 {state.user.id === undefined ? <Container className="btns">
                     <NavLink to='/register'>
                         <div className="btnUnderline">
-                            Register
+                            Zarejestruj
                             <div></div>
                         </div>
                     </NavLink>
                     <NavLink to='/login'>
                         <div className="btnUnderline">
-                            Login
+                            Zaloguj
                             <div></div>
                         </div>
                     </NavLink>
@@ -119,11 +119,11 @@ const MainNavbar = () => {
                     <NavDropdown title={<>Hi, {state.user.username}{state.image != undefined ? createImage() : <></>}</>} className="dropdownTitle">
                         <NavDropdown.Item href='/userManagement' className="dropdownItem">
                             <FontAwesomeIcon icon={faGear} />
-                            User Management
+                            Ustawienia konta
                         </NavDropdown.Item>
                         <NavDropdown.Item href='/logout' onClick={async (e) => await onLogout(e)} className="dropdownItem" id="logoutItem">
                             <FontAwesomeIcon icon={faRightFromBracket} />
-                            Logout
+                            Wyloguj
                         </NavDropdown.Item>
                     </NavDropdown>
                 </Container>}

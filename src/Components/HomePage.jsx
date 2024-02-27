@@ -11,9 +11,9 @@ const HomePage = () => {
             <div id="banner">
                 <div id="img"></div>
                 <span id="text">
-                    Don't have an account yet?
+                    Nie masz jeszcze konta?
                     <Link to='/register'>
-                        <Button variant="info">Register</Button>
+                        <Button variant="info">Zarejestruj</Button>
                     </Link>
                 </span>
             </div>

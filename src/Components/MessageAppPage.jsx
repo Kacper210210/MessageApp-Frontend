@@ -682,7 +682,7 @@ const MessageAppPage = () => {
                         </InputGroup.Text>
                 </InputGroup>
                 <Form.Group id="chatType" className="mb-3">
-                    <Form.Label>Search for chat type: </Form.Label>
+                    <Form.Label>Szukaj po rodzaju czatu: </Form.Label>
                     <Form.Group>
                         <Form.Check.Input
                             type="radio"
@@ -692,7 +692,7 @@ const MessageAppPage = () => {
                             onClick={() => setIsPrivateChat(true)}
                         />
                         <Form.Check.Label htmlFor="privateChat">
-                            Private Chat
+                            Czat prywatny
                         </Form.Check.Label>
                     </Form.Group>
                     <Form.Group>
@@ -703,12 +703,12 @@ const MessageAppPage = () => {
                             onClick={() => setIsPrivateChat(false)}
                         />
                         <Form.Check.Label htmlFor="groupChat">
-                            Group Chat
+                            Czat grupowy
                         </Form.Check.Label>
                     </Form.Group>
                 </Form.Group>
                 <Button variant="info" id="createGroupChat" className="mb-3" onClick={async () => await onCreateGroupChat()}>
-                    <FontAwesomeIcon icon={faPlus} /> Create Group Chat
+                    <FontAwesomeIcon icon={faPlus} /> Utwórz czat grupowy
                 </Button>
                 <div id="chat">
                     {
@@ -765,7 +765,7 @@ const MessageAppPage = () => {
                     }
                     <Button variant="info" id="startNewConversations">
                         <FontAwesomeIcon icon={faPlus} style={{ marginRight: '5px' }} />
-                        Start new conservations
+                        Zacznij nową konwersację
                     </Button>
                 </div>
             </div>

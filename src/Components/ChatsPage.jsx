@@ -631,7 +631,7 @@ const ChatsPage = () => {
                     <InputGroup.Text>
                         <FontAwesomeIcon icon={faPaperclip} />
                     </InputGroup.Text>
-                    <Form.Control type="text" name="message" placeholder="Enter message..." value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={async (e) => await onKeyDown(e)} />
+                    <Form.Control type="text" name="message" placeholder="Wpisz wiadomość..." value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={async (e) => await onKeyDown(e)} />
                 </InputGroup>
                 <Button variant="info" disabled={message.length === 0 ? true : false} onClick={async () => await sendMessage()}>
                     <FontAwesomeIcon icon={faPaperPlane} />

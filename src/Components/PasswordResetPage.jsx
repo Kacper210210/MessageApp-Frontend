@@ -33,7 +33,7 @@ const PasswordResetPage = () => {
                 <EmailInput userSettings={userSettings} setUserSettings={setUserSettings} isEmailValid={isEmailValid} setIsEmailValid={setIsEmailValid} />
             </Row>
             <div className="contentCenter">
-                <Button variant="info">Reset Password</Button>
+                <Button variant="info">Zresetuj hasło</Button>
             </div>
         </Form>
     </>);

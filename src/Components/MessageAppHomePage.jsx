@@ -52,7 +52,7 @@ const MessageAppHomePage = () => {
 
         if(searchUsersCheckedCount > 1) {
             return <>
-                <Form.Control type="text" id="messageInput" placeholder="Enter bulk message..." value={message} onChange={(e) => setMessage(e.target.value)} />
+                <Form.Control type="text" id="messageInput" placeholder="Wpisz wiadomość masową..." value={message} onChange={(e) => setMessage(e.target.value)} />
                 <Form.Text className="text-muted">
                     Send bulk message to:
                     <ul>
@@ -133,9 +133,9 @@ const MessageAppHomePage = () => {
                 textAlign: 'center',
                 color: '#00e6e6'
             }}>
-                Start new<br />conversations...
+                Zacznij nową<br />konwersację...
             </div>
-            <Button variant="info" onClick={async () => await onSearch()}>Search</Button>
+            <Button variant="info" onClick={async () => await onSearch()}>Szukaj</Button>
             <SearchUsersModal search={search} searchUsersChecked={searchUsersChecked} setSearchUsersChecked={setSearchUsersChecked} createPrimaryButton={createPrimaryButton} createMessageInput={createMessageInput} onCleanup={onHide} />
         </div>
     </>);

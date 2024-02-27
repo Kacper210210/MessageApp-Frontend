@@ -146,8 +146,8 @@ const LoginPage = () => {
             <h1 className="headline">Login</h1>
             <Row className="mb-3">
                 <Form.Group as={Col}>
-                    <Form.Label>Email address/Username: </Form.Label>
-                    <Form.Control type="text" name="username" placeholder="Enter email or username..." value={userSettings.username} onChange={(event) => {
+                    <Form.Label>Adres email/Nazwa użytkownika: </Form.Label>
+                    <Form.Control type="text" name="username" placeholder="Wpisz email lub nazwę użytkownika..." value={userSettings.username} onChange={(event) => {
                         setUserSettings({
                             ...userSettings,
                             username: event.target.value
@@ -158,7 +158,7 @@ const LoginPage = () => {
             <Row className="mb-3">
                 <PasswordInput userSettings={userSettings} setUserSettings={setUserSettings} isPasswordValid={isPasswordValid} setIsPasswordValid={setIsPasswordValid} />
                 <Form.Text id="passwordReset">
-                    <Link to='/passwordReset'>Reset password</Link>
+                    <Link to='/passwordReset'>Zresetuj hasło</Link>
                 </Form.Text>
             </Row>
             <div className="contentCenter">

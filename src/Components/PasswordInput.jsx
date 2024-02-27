@@ -25,7 +25,7 @@ const PasswordInput = ({ userSettings, setUserSettings, isPasswordValid, setIsPa
         <Form.Group as={Col}>
             <Form.Label>Password: </Form.Label>
             <InputGroup>
-                <Form.Control type="password" name="password" placeholder="Type password..." value={userSettings.password} onChange={(event) => onChange(event)} minLength={passwordMinLength} />
+                <Form.Control type="password" name="password" placeholder="Wpisz hasło..." value={userSettings.password} onChange={(event) => onChange(event)} minLength={passwordMinLength} />
                 <InputGroup.Text style={isPasswordValid ? { backgroundColor: 'green' } : { backgroundColor: 'red' }}>
                     {isPasswordValid ? <FontAwesomeIcon icon={faCheck} style={{ color: 'white' }} /> : <FontAwesomeIcon icon={faXmark} style={{ color: 'white' }} />}
                 </InputGroup.Text>

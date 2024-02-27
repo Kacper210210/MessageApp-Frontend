@@ -186,35 +186,35 @@ const RegisterPage = () => {
             </Row>
             <Form.Group className="mb-3">
                 <Form.Label>Username: </Form.Label>
-                <Form.Control type="text" name="username" placeholder="Enter username..." value={userSettings.username} onChange={(event) => onChange(event, 'username')} />
+                <Form.Control type="text" name="username" placeholder="Wpisz nazwę użytkownika..." value={userSettings.username} onChange={(event) => onChange(event, 'username')} />
             </Form.Group>
             <Row className="mb-3">
                 <Form.Group as={Col}>
                     <Form.Label>Name: </Form.Label>
-                    <Form.Control type="text" name="name" placeholder="Enter name..." value={userSettings.name} onChange={(event) => onChange(event, 'name')} />
+                    <Form.Control type="text" name="name" placeholder="Wpisz imię..." value={userSettings.name} onChange={(event) => onChange(event, 'name')} />
                 </Form.Group>
                 <Form.Group as={Col}>
                     <Form.Label>Surname: </Form.Label>
-                    <Form.Control type="text" name="surname" placeholder="Enter surname..." value={userSettings.surname} onChange={(event) => onChange(event, 'surname')} />
+                    <Form.Control type="text" name="surname" placeholder="Wpisz nazwisko..." value={userSettings.surname} onChange={(event) => onChange(event, 'surname')} />
                 </Form.Group>
             </Row>
             <div className="contentCenter" style={{
                 marginTop: '20px'
             }}>
-                <Button variant="info" onClick={async () => await onButtonClick()}  disabled={onValidate}>Register</Button>
+                <Button variant="info" onClick={async () => await onButtonClick()}  disabled={onValidate}>Zarejestruj</Button>
             </div>
         </Form>
         <Modal show={blocker.state === 'blocked' ? true : false} backdrop="static">
             <Modal.Header>
-                <Modal.Title>Leave website?</Modal.Title>
+                <Modal.Title>Opuścić stronę?</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                Do you really want to leave website and unsaved changes?
+                Opuścić stronę i zostawić niezapisane zmiany?
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={() => {
                     blocker.reset();
-                }}>Cancel</Button>
+                }}>Anuluj</Button>
                 <Button variant="primary" onClick={() => {
                     setUserSettings({
                         email: '',
@@ -225,7 +225,7 @@ const RegisterPage = () => {
                     });
 
                     blocker.proceed();
-                }}>Yes</Button>
+                }}>Tak</Button>
             </Modal.Footer>
         </Modal>
     </>);
